@@ -606,6 +606,19 @@ localStorage.getItem()
 localStorage.removeItem()
 localStorage.clear()
 
+参考: https://developer.mozilla.org/ja/docs/Web/API/Window/localStorage
+
+デベロッパーツールのコンソールで試してみる
+
+```console
+localStorage.setItem('myCat', 'Tom');
+
+// リロードしてから
+
+localStorage.getItem("myCat");
+localStorage.setItem('myCat', 'Tom');
+localStorage.removeItem("myCat");
+```
 
 <br/>
 <br/>
