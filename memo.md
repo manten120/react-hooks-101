@@ -440,14 +440,58 @@ branch: refactor-events-reducer
 
 reducerをリファクタリングする
 
-reducers/index.js → events.js
-reducers/index.js
+既存のreducerファイルの名前を変える
 
-combineReducerを導入する。
+reducers/index.js → reducers/events.js
+
+```console
+git mv src/reducers/index.js src/reducers/events.js
+```
+
+rootReducerのファイルreducers/index.jsを作成
+
+```console
+touch src/reducers/index.js
+```
+
+combineReducerとeventsをimportする。
+
+combineReducers()にeventsリデューサーを持つオブジェクトを渡す。
+
+
+これの返り値がルートリデューサーなのでそのままexportする。
+
+```js
+export default combineReducers({ events });
+```
+
+App.jsにてルートリデューサーをimportし、useReducerにわたす。
+
+useReducerの第２引数に渡すステートの初期値initialStateはオブジェクトで`{ events: [] }`
+
+`{ 個々のreducer名: そのreducerが管理するステートの初期値 }`
+
+eventsリデューサーで管理するステートの値は`state.events`
+
+
+```js
+// App.js
+import reducer from '../reducers';
+
+// Appコンポーネント内で
+const initialState = {
+  events: []
+}
+
+const [state, dispatch] = useReducer(reducer, initialState);
+```
+
+combineReducersを導入する。
 useReducerにrootReducerをわたす。
 useReducerにわたすinitialStateを変更する。
 initialState = {events: []};
 
+[] → { events: [] }
 
 この時点で生じたエラーを潰す。
 
