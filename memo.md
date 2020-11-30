@@ -534,6 +534,7 @@ ISO8601形式のメリット
 
 - タイムスタンプはだいたいISO8601形式。
 
+参考https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOStri
 
 <br/>
 <br/>
@@ -542,10 +543,17 @@ ISO8601形式のメリット
 
 branch: create-operationLogs
 
+EventFormコンポーネントで、
+
 追加済みのaction.typeの定数をインポート
-操作日時を返す関数をインポート
+
+日時を返す関数timeCurrentIso8601をインポート
 
 操作ログ用のdispatch()を追加
+
+イベント作成時と、全てのイベント削除時にログがのこるよう、それぞれdispatch関数を呼ぶ
+
+ログはまだブラウザに表示されないがデベロッパーツールでstateを見ると、ログが残っていることが確認できる
 
 <br/>
 <br/>
