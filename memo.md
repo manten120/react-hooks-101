@@ -425,7 +425,11 @@ reactDeveloperTool
 
 branch: install-redux
 
-reduxをインストールする redux@4.0.1
+reduxをインストールする 
+
+```console
+yarn add redux@4.0.1
+```
 
 <br />
 <br />
