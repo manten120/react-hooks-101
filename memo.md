@@ -399,6 +399,232 @@ useContextを使ってリファクタリング。PropDrilling問題を解消。
 
 stateやdispatchをpropsで親から子コンポーネントに渡すのではなく、Context.Providerでトップレベルコンポーネントから子孫コンポーネント渡す。子孫ではuseContextでそれらを受け取る。このときstateやdispatchはトップレベルコンポーネントで定義する。
 
+<br />
+<br />
+
+# lesson22
+
+branch: なし
+
+reactDeveloperTool
+
+イベントを管理するreducer
+
+ログを管理するreducer
+
+2つのreducerをReduxのcombineReducersを使って1つのreducerに統合する
+
+参考: https://redux.js.org/api/combinereducers
+
+統合してできたrootReducerを、通常のreducerと同様にuseReducerの第一引数に渡す
+
+<br />
+<br />
+
+# lesson23
+
+branch: install-redux
+
+reduxをインストールする 
+
+```console
+yarn add redux@4.0.1
+```
+
+<br />
+<br />
+
+# lesson24 
+
+branch: refactor-events-reducer
+
+reducerをリファクタリングする
+
+既存のreducerファイルの名前を変える
+
+reducers/index.js → reducers/events.js
+
+```console
+git mv src/reducers/index.js src/reducers/events.js
+```
+
+rootReducerのファイルreducers/index.jsを作成
+
+```console
+touch src/reducers/index.js
+```
+
+combineReducerとeventsをimportする。
+
+combineReducers()にeventsリデューサーを持つオブジェクトを渡す。
 
 
+これの返り値がルートリデューサーなのでそのままexportする。
 
+```js
+export default combineReducers({ events });
+```
+
+App.jsにてルートリデューサーをimportし、useReducerにわたす。
+
+useReducerの第２引数に渡すステートの初期値initialStateはオブジェクトで`{ events: [] }`
+
+`{ 個々のreducer名: そのreducerが管理するステートの初期値 }`
+
+eventsリデューサーで管理するステートの値は`state.events`
+
+
+```js
+// App.js
+import reducer from '../reducers';
+
+// Appコンポーネント内で
+const initialState = {
+  events: []
+}
+
+const [state, dispatch] = useReducer(reducer, initialState);
+```
+
+combineReducersを導入する。
+useReducerにrootReducerをわたす。
+useReducerにわたすinitialStateを変更する。
+initialState = {events: []};
+
+[] → { events: [] }
+
+この時点で生じたエラーを潰す。
+
+<br />
+<br />
+
+# lesson25
+
+branch: create-operational-reducer
+
+操作ログ用のreducerを作成する
+
+action.type用の定数を追加
+ADD_OPERATION_LOG
+DELETE_ALL_OPERATION_LOG
+
+reducers/operationLogs.js
+action.description, action.operatedAt
+
+combineReducerにわたす。
+initialStateにoperationLogs用の初期stateを追加する。
+initialState = {events: [], operationLogs: []};
+
+<br/>
+<br/>
+
+# lesson26
+
+branch: iso8601
+
+```console
+touch src/utils.js
+```
+
+日時を返す関数timeCurrentIso8601を作る
+
+ISO8601形式のメリット
+
+- 他のサービスなどに送信する際に他の形式に変換せずそのまま送れる。
+
+- タイムスタンプはだいたいISO8601形式。
+
+参考https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOStri
+
+<br/>
+<br/>
+
+# lesson27
+
+branch: create-operationLogs
+
+EventFormコンポーネントで、
+
+追加済みのaction.typeの定数をインポート
+
+日時を返す関数timeCurrentIso8601をインポート
+
+操作ログ用のdispatch()を追加
+
+イベント作成時と、全てのイベント削除時にログがのこるよう、それぞれdispatch関数を呼ぶ
+
+ログはまだブラウザに表示されないがデベロッパーツールでstateを見ると、ログが残っていることが確認できる
+
+<br/>
+<br/>
+
+# lesson28
+
+branch: delete-all-operationLogs
+
+全ての操作ログを削除するボタンを作成する
+オンクリックイベントにdeleteAllOperationLogs()
+その中でdispatch({type: DELETE_ALL_OPERATION_LOGS})
+state.operationLogs===0のときdisabled
+
+<br/>
+<br/>
+
+# lesson29
+
+branch: create-operationLog-in-case-of-event-deletion
+
+イベント削除時の操作ログを残す。
+
+<br/>
+<br/>
+
+# lesson30
+
+branch": display-all-operationLogs
+
+操作ログ一覧をブラウザに表示する
+
+Events,Eventsコンポーネントと同じ要領で。
+
+OperationLogs
+OperationLog
+
+<br/>
+<br/>
+
+# lesson31
+
+branch: なし
+
+ローカルストレージについて
+
+イベント一覧、操作ログ一覧をブラウザのローカルストレージに保存して永続化する
+
+localStorage.setItem()
+localStorage.getItem()
+localStorage.removeItem()
+localStorage.clear()
+
+参考: https://developer.mozilla.org/ja/docs/Web/API/Window/localStorage
+
+デベロッパーツールのコンソールで試してみる
+
+```console
+localStorage.setItem('myCat', 'Tom');
+
+// リロードしてから
+
+localStorage.getItem("myCat");
+localStorage.setItem('myCat', 'Tom');
+localStorage.removeItem("myCat");
+```
+
+<br/>
+<br/>
+
+# lesson32
+
+branch: save-state-with-localStorage
+
+stateが変更されたらuseEffect内で保存処理をする
