@@ -399,6 +399,156 @@ useContextを使ってリファクタリング。PropDrilling問題を解消。
 
 stateやdispatchをpropsで親から子コンポーネントに渡すのではなく、Context.Providerでトップレベルコンポーネントから子孫コンポーネント渡す。子孫ではuseContextでそれらを受け取る。このときstateやdispatchはトップレベルコンポーネントで定義する。
 
+<br />
+<br />
+
+# lesson22
+
+branch: なし
+
+reactDeveloperTool
+
+イベントを管理するreducer
+
+ログを管理するreducer
+
+2つのreducerをReduxのcombineReducersを使って1つのreducerに統合する
+
+参考: https://redux.js.org/api/combinereducers
+
+統合してできたrootReducerを、通常のreducerと同様にuseReducerの第一引数に渡す
+
+<br />
+<br />
+
+# lesson23
+
+branch: install-redux
+
+reduxをインストールする redux@4.0.1
+
+<br />
+<br />
+
+# lesson24 
+
+branch: refactor-events-reducer
+
+reducerをリファクタリングする
+
+reducers/index.js → events.js
+reducers/index.js
+
+combineReducerを導入する。
+useReducerにrootReducerをわたす。
+useReducerにわたすinitialStateを変更する。
+initialState = {events: []};
 
 
+この時点で生じたエラーを潰す。
 
+<br />
+<br />
+
+# lesson25
+
+branch: create-operational-reducer
+
+操作ログ用のreducerを作成する
+
+action.type用の定数を追加
+ADD_OPERATION_LOG
+DELETE_ALL_OPERATION_LOG
+
+reducers/operationLogs.js
+action.description, action.operatedAt
+
+combineReducerにわたす。
+initialStateにoperationLogs用の初期stateを追加する。
+initialState = {events: [], operationLogs: []};
+
+<br/>
+<br/>
+
+# lesson26
+
+branch: iso8601
+
+操作日時operatedAtのためのヘルパー関数を作る。
+
+src/utils.js
+
+日時を返す関数を作る
+
+<br/>
+<br/>
+
+# lesson27
+
+branch: create-operationLogs
+
+追加済みのaction.typeの定数をインポート
+操作日時を返す関数をインポート
+
+操作ログ用のdispatch()を追加
+
+<br/>
+<br/>
+
+# lesson28
+
+branch: delete-all-operationLogs
+
+全ての操作ログを削除するボタンを作成する
+オンクリックイベントにdeleteAllOperationLogs()
+その中でdispatch({type: DELETE_ALL_OPERATION_LOGS})
+state.operationLogs===0のときdisabled
+
+<br/>
+<br/>
+
+# lesson29
+
+branch: create-operationLog-in-case-of-event-deletion
+
+イベント削除時の操作ログを残す。
+
+<br/>
+<br/>
+
+# lesson30
+
+branch": display-all-operationLogs
+
+操作ログ一覧をブラウザに表示する
+
+Events,Eventsコンポーネントと同じ要領で。
+
+OperationLogs
+OperationLog
+
+<br/>
+<br/>
+
+# lesson31
+
+branch: なし
+
+ローカルストレージについて
+
+イベント一覧、操作ログ一覧をブラウザのローカルストレージに保存して永続化する
+
+localStorage.setItem()
+localStorage.getItem()
+localStorage.removeItem()
+localStorage.clear()
+
+
+<br/>
+<br/>
+
+# lesson32
+
+branch: save-state-with-localStorage
+
+stateが変更されたらuseEffect内で保存処理をする
