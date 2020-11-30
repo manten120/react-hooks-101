@@ -522,11 +522,18 @@ initialState = {events: [], operationLogs: []};
 
 branch: iso8601
 
-操作日時operatedAtのためのヘルパー関数を作る。
+```console
+touch src/utils.js
+```
 
-src/utils.js
+日時を返す関数timeCurrentIso8601を作る
 
-日時を返す関数を作る
+ISO8601形式のメリット
+
+- 他のサービスなどに送信する際に他の形式に変換せずそのまま送れる。
+
+- タイムスタンプはだいたいISO8601形式。
+
 
 <br/>
 <br/>
