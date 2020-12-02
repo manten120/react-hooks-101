@@ -408,9 +408,9 @@ branch: なし
 
 reactDeveloperTool
 
-イベントを管理するreducer
+イベントを管理するreducerと
 
-ログを管理するreducer
+ログを管理するreducer、
 
 2つのreducerをReduxのcombineReducersを使って1つのreducerに統合する
 
@@ -438,9 +438,9 @@ yarn add redux@4.0.1
 
 branch: refactor-events-reducer
 
-reducerをリファクタリングする
+### reducerをリファクタリングする
 
-既存のreducerファイルの名前を変える
+#### 既存のreducerファイルの名前を変える
 
 reducers/index.js → reducers/events.js
 
@@ -448,11 +448,13 @@ reducers/index.js → reducers/events.js
 git mv src/reducers/index.js src/reducers/events.js
 ```
 
-rootReducerのファイルreducers/index.jsを作成
+#### rootReducerのファイルreducers/index.jsを作成
 
 ```console
 touch src/reducers/index.js
 ```
+
+src/reducers/index.jsにて
 
 combineReducerとeventsをimportする。
 
@@ -467,11 +469,26 @@ export default combineReducers({ events });
 
 App.jsにてルートリデューサーをimportし、useReducerにわたす。
 
-useReducerの第２引数に渡すステートの初期値initialStateはオブジェクトで`{ events: [] }`
+useReducerの第２引数には、ルートリデューサーの初期値initialStateを渡す。
+
+initialStateは個々のリデューサーが管理するステートの初期値をもつオブジェクト。
 
 `{ 個々のreducer名: そのreducerが管理するステートの初期値 }`
 
-eventsリデューサーで管理するステートの値は`state.events`
+今回は `{ events: [] }`
+
+のちにリデューサーが増え
+
+```
+const initialState = {
+  events: [], 
+  perationLogs: []
+}
+```
+
+になる。
+
+eventsリデューサーで管理するステートの値は`state.events`で取り出せる
 
 
 ```js
@@ -487,9 +504,12 @@ const [state, dispatch] = useReducer(reducer, initialState);
 ```
 
 combineReducersを導入する。
+
 useReducerにrootReducerをわたす。
+
 useReducerにわたすinitialStateを変更する。
-initialState = {events: []};
+
+`const initialState = {events: []};`
 
 [] → { events: [] }
 
@@ -502,18 +522,40 @@ initialState = {events: []};
 
 branch: create-operational-reducer
 
-操作ログ用のreducerを作成する
+### 操作ログ用のreducerを作成する
+
+#### actions/index.js
 
 action.type用の定数を追加
-ADD_OPERATION_LOG
-DELETE_ALL_OPERATION_LOG
 
-reducers/operationLogs.js
+`ADD_OPERATION_LOG`, 
+`DELETE_ALL_OPERATION_LOG`
+
+#### reducers/operationLogs.js
+
+operationLogsリデューサーにはdispatch経由で次のようなactionオブジェクトが渡される。
+
+```js
+{
+  type: ADD_OPERATION_LOG,
+  description: /*操作内容の説明*/,
+  operatedAt: /*操作した時刻*/,
+}
+```
+
+または
+
+```js
+{ type: DELETE_ALL_OPERATION_LOGS }
+```
+
 action.description, action.operatedAt
 
 combineReducerにわたす。
+
 initialStateにoperationLogs用の初期stateを追加する。
-initialState = {events: [], operationLogs: []};
+
+`const initialState = {events: [], operationLogs: []};`
 
 <br/>
 <br/>
@@ -562,10 +604,13 @@ EventFormコンポーネントで、
 
 branch: delete-all-operationLogs
 
-全ての操作ログを削除するボタンを作成する
-オンクリックイベントにdeleteAllOperationLogs()
-その中でdispatch({type: DELETE_ALL_OPERATION_LOGS})
-state.operationLogs===0のときdisabled
+### 全ての操作ログを削除するボタンを作成する
+
+- オンクリックイベントにdeleteAllOperationLogs()
+
+- その中でdispatch({type: DELETE_ALL_OPERATION_LOGS})
+
+- state.operationLogs===0、つまりログがないとき、disabledでボタンを非活性化
 
 <br/>
 <br/>
@@ -628,3 +673,24 @@ localStorage.removeItem("myCat");
 branch: save-state-with-localStorage
 
 stateが変更されたらuseEffect内で保存処理をする
+
+localStorageのメソッドに渡す値は文字列でなくてはいけないので
+
+`JSON.stringify(state)`で文字列化してあげる。
+
+保存した値を取得する
+
+```
+const appState = localStorage.getItem(app_key);
+```
+
+これも文字列である。もとのオブジェクトに復元するときは
+
+```js
+
+JSON.parse(appState)
+
+```
+
+でオブジェクトに戻す。
+
